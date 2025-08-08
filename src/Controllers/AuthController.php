@@ -36,15 +36,16 @@ class AuthController {
                 $redirect_url = $_SESSION['redirect_url'] ?? '/tickets';
                 unset($_SESSION['redirect_url']);
 
-                header('Location:' . $redirect_url);
+                header('Location: ' . $redirect_url);
                 exit;
             }
             else {
                 $error = "Credenciais inválidas";
                 
             }
-        require __DIR__ . '/../../src/View/auth/login.php';
+        
         }
+        require __DIR__ . '/../../src/View/auth/login.php';
     }
 
     // Terminar a sessão

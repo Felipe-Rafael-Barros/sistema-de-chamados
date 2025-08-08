@@ -1,0 +1,26 @@
+* {
+    
+    color: rgb(38, 41, 44);
+}
+
+ul {
+
+    display: flex;
+    gap: 7%;
+    align-items: center;
+    list-style: none;
+    justify-content: center;
+    gap: 10%;
+}
+
+li{
+    
+    
+}
+li:hover{
+
+    text-decoration: underline;
+    color: white;
+    border-radius: 10%;
+    background-color: #0D6EFD;
+}

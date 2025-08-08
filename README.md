@@ -21,6 +21,12 @@ SISTEMA-DE-CHAMADOS/
         ├── auth/
         │   └── login.php
         └── tickets/
-            ├── index.php
-            ├── create.php
-            └── edit.php
+        │   ├── index.php
+        │   ├── create.php
+        │   └── edit.php
+        └── layouts/
+            ├── footer.php
+            └── header.php
+            
+
+    
