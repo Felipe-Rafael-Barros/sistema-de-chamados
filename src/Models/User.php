@@ -8,7 +8,7 @@ class User {
     }
 
     // Autenticação
-    public function userLogin($username, $password) {  // Padrão camelCase
+    public function userLogin($username, $password) {  
         $query = $this->database->prepare(
             "SELECT id, username, password FROM usuarios WHERE username = ?"
         );
