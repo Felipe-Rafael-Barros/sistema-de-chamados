@@ -1,7 +1,11 @@
 * {
     
     color: rgb(38, 41, 44);
+    
+    
 }
+
+
 
 ul {
 
@@ -14,10 +18,7 @@ ul {
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
 }
 
-li{
-    
-    
-}
+
 li:hover{
 
     text-decoration: underline;
@@ -49,3 +50,6 @@ li:hover{
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); 
 }
 
+.h1-chamados {
+    color: #b90dfd;
+}

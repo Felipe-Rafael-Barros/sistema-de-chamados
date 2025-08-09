@@ -10,19 +10,17 @@
         <ul class="list-header">
 
             <li>
-                Login
+                <a href="https://verdanatech.com/" target="_blank" ><img width="120" src="https://verdanatech.com/wp-content/webp-express/webp-images/uploads/2024/04/Group-47399.png.webp" alt="VerdanaTech"></a>
+            </li>
+
+         
+
+            <li>
+                <a href="/sistema-de-chamados/src/Views/others-pages/projec-information.php"> Informações do Projeto(só opós login)</a>
             </li>
 
             <li>
-                +
-            </li>
-
-            <li>
-                Informações do projeto
-            </li>
-
-            <li>
-                Sobre a empresa
+                <a href="https://github.com/Felipe-Rafael-Barros/sistema-de-chamados" target="_blank">Repositório Do Projeto</a>
             </li>
              <!-- Para so aparecar nas abas quando eu estiver logado  -->
             <?php if (isset($_SESSION['userLogged'])): ?>

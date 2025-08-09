@@ -25,8 +25,8 @@ CREATE TABLE chamados (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
--- 5. Insere usuários de teste (senhas criptografadas)
--- Senha padrão: 'password' (hash gerado com password_hash())
+-- 5. Insere usuários de teste 
+-- Senha padrão: 'password' 
 INSERT INTO usuarios (username, password) VALUES 
 ('admin', '123'),
 ('Felipe', 'Barros');
