@@ -1,3 +1,13 @@
+<?php
+// 1. Verificação de sessão ( Se estou logado ou não)
+session_start();
+if (!isset($_SESSION['userLogged'])) {
+    header("Location: /sistema-de-chamados/src/Views/auth/login.php");
+    exit;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -28,7 +38,7 @@
                             <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
                         <?php endif; ?>
                         
-                        <form method="POST" action="/tickets" class="row g-3 needs-validation" novalidate>
+                        <form method="POST" action="/sistema-de-chamados/public/index.php" class="row g-3 needs-validation" novalidate>
                             <div class="col-md-12">
                                 <label for="titulo" class="form-label">Título do Chamado *</label>
                                 <input type="text" class="form-control" id="titulo" name="titulo" required>
@@ -39,10 +49,14 @@
                             
                             <div class="col-md-12">
                                 <label for="descricao" class="form-label">Descrição Detalhada *</label>
-                                <textarea class="form-control" id="descricao" name="descricao" rows="4" required></textarea>
+                                <input type="text" class="form-control" id="descricao" name="descricao" required>
                                 <div class="invalid-feedback">
                                     Por favor, insira uma descrição.
                                 </div>
+                            </div>
+
+                            <div>
+                                <input type="hidden" name="action" value="create">
                             </div>
                             
                             <div class="col-12">

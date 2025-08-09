@@ -1,3 +1,20 @@
+<?php
+session_start();
+require __DIR__ . '/../../Controllers/TicketController.php';
+
+// Conexão PDO
+$config = require __DIR__ . '/../../../config/database.php';
+$pdo = new PDO(
+    "mysql:host={$config['host']};dbname={$config['database']};charset=utf8mb4",
+    $config['username'],
+    $config['password'],
+    $config['options']
+);
+
+$controller = new TicketController($pdo);
+$tickets = $controller->listTickets();
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -11,7 +28,7 @@
 <body>
     <?php require __DIR__ . '/../layouts/header.php'; ?>
 
-    <main class="container mt-4">
+    <main class="container mt-4" style="top: 100;">
         <?php if (isset($_SESSION['success'])): ?>
             <div class="alert alert-success alert-dismissible fade show">
                 <?= $_SESSION['success'] ?>
@@ -33,6 +50,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Título</th>
+                        <th>Descrição</th>
                         <th>Status</th>
                         <th>Data</th>
                         <th>Ações</th>
@@ -44,6 +62,7 @@
                         <tr>
                             <td><?= $ticket['id'] ?></td>
                             <td><?= htmlspecialchars($ticket['titulo']) ?></td>
+                            <td><?= htmlspecialchars($ticket['descricao']) ?></td>
                             <td>
                                 <span class="badge rounded-pill bg-<?= 
                                     $ticket['status'] === 'aberto' ? 'success' : 
@@ -54,7 +73,7 @@
                             </td>
                             <td><?= date('d/m/Y H:i', strtotime($ticket['created_at'])) ?></td>
                             <td>
-                                <a href="/tickets/<?= $ticket['id'] ?>/edit" class="btn btn-sm btn-outline-primary me-2">
+                                <a href="/sistema-de-chamados/src/Views/tickets/edit.php?id=<?= $ticket['id'] ?>" class="btn btn-sm btn-outline-primary me-2">
                                     <i class="bi bi-pencil"></i> Editar
                                 </a>
                             </td>
@@ -62,7 +81,7 @@
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="5" class="text-center text-muted py-4">
+                            <td colspan="6" class="text-center text-muted py-4">
                                 <i class="bi bi-inbox"></i> Nenhum chamado cadastrado
                             </td>
                         </tr>
@@ -76,6 +95,5 @@
     <footer>
         <?php require __DIR__ . '/../layouts/footer.php'; ?>
     </footer>
-    
 </body>
 </html>

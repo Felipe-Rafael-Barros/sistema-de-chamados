@@ -1,60 +1,46 @@
 <?php
-// Controlador de Autenticação do sistema
 class AuthController {
+    private $pdo;
 
-    private $userModel;
-
-    public function __construct($database) {
-        $this->userModel = new User($database);
-
-    }
-
-    //Exibição da tela de login
-
-    public function showLogin() {
-        if ($this->userModel->isLoggedIn()) {
-            header("Location: /tickets");
-            exit;
-        }
-        require __DIR__ . '/../../src/Views/auth/login.php';
-    }
-
-    // Sistema de Processamento do formulário da página de login
-
-    public function login() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
-            $password = filter_input(INPUT_POST,'password', FILTER_SANITIZE_STRING);
+    public function __construct(PDO $pdo) {
+        $this->pdo = $pdo;
         
+    }
 
-            $user = $this->userModel->userLogin($username, $password);
+    public function authentication($username, $password) {
+        //Consulta ao banco de dados
+        $stmt = $this->pdo->prepare("SELECT id, username, password FROM usuarios WHERE username = ?");
+        $stmt->execute([$username]);
+        $user = $stmt->fetch();
 
-            if ($user) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
+        if ($user) { //Avalia se o usuário indicado existe
 
-                $redirect_url = $_SESSION['redirect_url'] ?? '/tickets';
-                unset($_SESSION['redirect_url']);
 
-                header('Location: ' . $redirect_url);
+            if ($password === $user['password']) { //Avalia se a senha dada e a do banco de dados estão corretas
+                $_SESSION['userLogged'] = [
+                    'id' => $user['id'],
+                    'username' => $user['username']
+                ];
+                header("Location: /sistema-de-chamados/src/Views/Tickets/index.php");
+                exit;
+            } else {
+                echo "<script>
+                    alert('usuário ou Senha incorreta, tente novamente.');
+                    window.location.href = '/sistema-de-chamados/src/Views/auth/login.php';
+                </script>";
                 exit;
             }
-            else {
-                $error = "Credenciais inválidas";
-                
-            }
-        
+        } else {
+            echo "<script>
+                alert('Usuário ou senha incorreta, tente novamente.');
+                window.location.href = '/sistema-de-chamados/src/Views/auth/login.php';
+            </script>";
+            exit;
         }
-        require __DIR__ . '/../../src/View/auth/login.php';
     }
 
-    // Terminar a sessão
+    
 
-    public function logout() {
-        User::logout();
-        header('Location: /login');
-        exit;
-    }
+    
 }
-
 ?>

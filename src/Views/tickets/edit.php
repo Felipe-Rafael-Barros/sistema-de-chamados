@@ -1,9 +1,46 @@
+<?php
+// Verificação de sessão
+session_start();
+if (!isset($_SESSION['userLogged'])) {
+    header("Location: /sistema-de-chamados/src/Views/auth/login.php");
+    exit;
+}
+
+require __DIR__ . '/../../Controllers/TicketController.php';
+
+// Conexão PDO
+$config = require __DIR__ . '/../../../config/database.php';
+$pdo = new PDO(
+    "mysql:host={$config['host']};dbname={$config['database']};charset=utf8mb4",
+    $config['username'],
+    $config['password'],
+    $config['options']
+);
+
+$controller = new TicketController($pdo);
+
+// Verifica se o ID foi passado
+if (!isset($_GET['id'])) {
+    header("Location: /sistema-de-chamados/src/Views/tickets/index.php");
+    exit;
+}
+
+$ticketId = $_GET['id'];
+$ticket = $controller->getTicketById($ticketId);
+
+// Verifica se o ticket existe
+if (!$ticket) {
+    header("Location: /sistema-de-chamados/src/Views/tickets/index.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($ticket) ? 'Editar Chamado #'.$ticket['id'] : 'Chamado Não Encontrado'; ?></title>
+    <title>Editar Chamado | Sistema de Chamados</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/sistema-de-chamados/public/css/styles.css">
@@ -12,70 +49,56 @@
     <?php require __DIR__ . '/../layouts/header.php'; ?>
 
     <main class="container mt-4">
-        <?php if (!isset($ticket)): ?>
-            <div class="alert alert-danger">
-                <i class="bi bi-exclamation-triangle-fill"></i> Chamado não encontrado ou não especificado.
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show">
+                <?= $_SESSION['error'] ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            <a href="/sistema-de-chamados/src/Views/tickets/index.php" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Voltar para lista
-            </a>
-        <?php else: ?>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card shadow">
-                        <div class="card-header bg-warning text-dark">
-                            <h2 class="h4 mb-0"><i class="bi bi-pencil-square"></i> Editar Chamado #<?php echo $ticket['id']; ?></h2>
-                        </div>
-                        
-                        <div class="card-body">
-                            <?php if (isset($error)): ?>
-                                <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
-                            <?php endif; ?>
-                            
-                            <form method="POST" action="/tickets/<?php echo $ticket['id']; ?>">
-                                <div class="mb-3">
-                                    <label class="form-label">Título *</label>
-                                    <input type="text" class="form-control" name="titulo" 
-                                           value="<?php echo isset($ticket['titulo']) ? htmlspecialchars($ticket['titulo']) : ''; ?>" required>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">Descrição *</label>
-                                    <textarea class="form-control" name="descricao" rows="5" required><?php 
-                                        echo isset($ticket['descricao']) ? htmlspecialchars($ticket['descricao']) : ''; 
-                                    ?></textarea>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">Status *</label>
-                                    <select class="form-select" name="status" required>
-                                        <option value="aberto" <?php echo (isset($ticket['status']) && $ticket['status'] === 'aberto') ? 'selected' : ''; ?>>Aberto</option>
-                                        <option value="em_andamento" <?php echo (isset($ticket['status']) && $ticket['status'] === 'em_andamento') ? 'selected' : ''; ?>>Em Andamento</option>
-                                        <option value="resolvido" <?php echo (isset($ticket['status']) && $ticket['status'] === 'resolvido') ? 'selected' : ''; ?>>Resolvido</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="d-flex justify-content-between">
-                                    <a href="/sistema-de-chamados/src/Views/tickets/index.php" class="btn btn-secondaryclass="btn btn-secondary">
-                                        <i class="bi bi-arrow-left"></i> Voltar
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-check-circle"></i> Salvar
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="bi bi-pencil-square"></i> Editar Chamado #<?= $ticket['id'] ?></h2>
+            </div>
+            <div class="card-body">
+                <form action="/sistema-de-chamados/public/index.php" method="post">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" name="id" value="<?= $ticket['id'] ?>">
+                    
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" 
+                               value="<?= htmlspecialchars($ticket['titulo']) ?>" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descricao" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="descricao" name="descricao" 
+                                  rows="5" required><?= htmlspecialchars($ticket['descricao']) ?></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status" required>
+                            <option value="aberto" <?= $ticket['status'] === 'aberto' ? 'selected' : '' ?>>Aberto</option>
+                            <option value="em_andamento" <?= $ticket['status'] === 'em_andamento' ? 'selected' : '' ?>>Em Andamento</option>
+                            <option value="fechado" <?= $ticket['status'] === 'fechado' ? 'selected' : '' ?>>Fechado</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Salvar Alterações
+                    </button>
+                    <a href="/sistema-de-chamados/src/Views/tickets/index.php" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                </form>
+            </div>
+        </div>
     </main>
-    
+
+    <?php require __DIR__ . '/../layouts/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <footer>
-        <?php require __DIR__ . '/../layouts/footer.php'; ?>
-    </footer>
-    
 </body>
 </html>

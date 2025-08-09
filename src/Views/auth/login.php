@@ -32,7 +32,8 @@
                                 <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
                             <?php endif; ?>
                             
-                            <form method="POST" action="/login">
+                            <form method="POST" action="/sistema-de-chamados/public/index.php"> <!--   
+                            Envia para o caminho do action -->
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Usuário</label>
                                     <input type="text" class="form-control" id="username" name="username" required>
@@ -41,6 +42,10 @@
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Senha</label>
                                     <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+
+                                <div>
+                                    <input type="hidden" name="action" value="login">
                                 </div>
                                 
                                 <div class="d-grid gap-2">
@@ -65,11 +70,5 @@
 </body>
 </html>
 
-
-    <!-- Testando paginas -->
-     <a href="/sistema-de-chamados/src/Views/tickets/create.php">Create</a>
-     <a href="/sistema-de-chamados/src/Views/tickets/edit.php">Edit</a>
-     <a href="/sistema-de-chamados/src/Views/tickets/index.php">Index</a>
-    </main>
 
 

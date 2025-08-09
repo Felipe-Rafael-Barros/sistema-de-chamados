@@ -1,44 +1,56 @@
-<!--
-    Centraliza todas as requisições
-    Vão ficar as configurações iniciais
-    Roteamento inteligente
-    
- 
--->
-
-
 <?php
-require __DIR__ . '/../config/database.php';
-$routes = require __DIR__ . '/../config/routes.php';
+session_start();
+error_reporting(E_ALL);
 
-// Inicia a conexão PDO
+// Conexão com o banco
+$config = require __DIR__ . '/../config/database.php';
+
+
+//Conexão PDO
 try {
-    $dsn = "mysql:host={$config['host']};dbname={$config['database']};charset={$config['charset']}";
-    $pdo = new PDO($dsn, $config['username'], $config['password'], $config['options']);
+    $pdo = new PDO(
+        "mysql:host={$config['host']};dbname={$config['database']};charset=utf8mb4",
+        $config['username'],
+        $config['password'],
+        $config['options']
+    );
 } catch (PDOException $e) {
-    die('Erro de conexão: '. $e->getMessage());
+    die("Erro de conexão: " . $e->getMessage());
 }
 
-// Roteamento
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$method = $_SERVER['REQUEST_METHOD'];
-$routeKey = "$method $path";
+// Importa o AuthController e Cria o controller passando o $pdo
 
-// Verifica rota existente
-if (isset($routes[$routeKey])) {
-    [$controllerName, $action] = $routes[$routeKey];
-    $controller = new $controllerName($pdo);
+require __DIR__ ."/../src/Controllers/AuthController.php";
+require __DIR__ ."/../src/Controllers/TicketController.php";
+$authController = new AuthController($pdo);
+$TicketController = new TicketController($pdo);
 
-    // Extrai ID para rotas dinâmicas
-    if (preg_match('/\{id\}/', $routeKey)) {
-        preg_match('/\d+/', $path, $matches);
-        $id = $matches[0] ?? null;
-        $controller->$action($id);
-    } else {
-        $controller->$action();
-    }
-} else {
-    http_response_code(404);
-    echo "Página não encontrada";
+$Action = $_POST['action'];
+
+//Seletor de ações baseado no campo do form a qual a mensagem chegar
+
+switch ($Action) {
+    case 'login':
+        $username = $_POST['username']; //Pega a informação passada no login do site
+        $password = $_POST['password']; //Pega a informação passada no login do site
+
+        $authController->authentication($username, $password);
+        break;
+    case 'create':
+        $titulo = $_POST['titulo'];
+        $descricao = $_POST['descricao'];
+        $TicketController->createTicket($titulo, $descricao);
+        break;
+    case 'list':
+    
+        $tickets = $ticketController->listTickets();
+        break;
+    case 'update':
+        $id = $_POST['id'];
+        $titulo = $_POST['titulo'];
+        $descricao = $_POST['descricao'];
+        $status = $_POST['status'];
+        $TicketController->updateTicket($id);
+        break;
 }
 ?>

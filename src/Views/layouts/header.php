@@ -24,6 +24,14 @@
             <li>
                 Sobre a empresa
             </li>
+             <!-- Para so aparecar nas abas quando eu estiver logado  -->
+            <?php if (isset($_SESSION['userLogged'])): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sistema-de-chamados/src/Views/auth/logout.php">
+                        <i class="bi bi-box-arrow-right"></i> Sair (<?= $_SESSION['userLogged']['username'] ?>)
+                    </a>
+                </li>
+            <?php endif; ?>
             
         </ul>
     </header>
