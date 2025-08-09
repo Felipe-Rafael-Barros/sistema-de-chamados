@@ -7,7 +7,7 @@
 </head>
 <body>
     <header>
-        <ul class="list_footer">
+        <ul class="list-footer">
 
             <li>
                 Linkedin

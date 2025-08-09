@@ -79,6 +79,9 @@
     })()
     </script>
     
-    <?php require __DIR__ . '/../layouts/footer.php'; ?>
+    <footer>
+        <?php require __DIR__ . '/../layouts/footer.php'; ?>
+    </footer>
+    
 </body>
 </html>

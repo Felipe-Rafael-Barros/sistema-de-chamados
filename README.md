@@ -4,10 +4,15 @@ Arquitetura do Projeto:
 
 SISTEMA-DE-CHAMADOS/
 ├── config/
-│   ├── database.php     # Config do banco (PDO)
+│   ├── database.php     # Config do banco (SQL)
 │   └── routes.php       # Definição de rotas
+│
+├── node_modules
+│
 ├── public/
-│   ├── css/             # Bootstrap/Tailwind aqui
+│   ├── css/             # Bootstrap/Tailwind 
+│   │   ├── styles.css
+│   │   └── bootstrap.min.css
 │   ├── js/              # Scripts JS
 │   └── index.php        # Roteador principal
 └── src/
