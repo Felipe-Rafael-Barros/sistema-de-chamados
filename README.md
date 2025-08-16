@@ -1,7 +1,6 @@
-##  Sistema de Chamados - Verdanatech Challenge
+##  Sistema de Chamados 
 
 ###  Sobre o Projeto
-Este projeto foi desenvolvido como parte do **desafio técnico para vaga de Desenvolvedor Júnior** da **Verdanatech**.  
 O objetivo foi criar um **sistema de gerenciamento de chamados** com autenticação, listagem, criação e edição de chamados, seguindo a arquitetura **MVC** e boas práticas de programação orientada a objetos.
 
 ---
